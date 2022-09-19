@@ -8,6 +8,9 @@ using System.Windows;
 
 using Reservroom.Models;
 using Reservroom.Exceptions;
+using Reservroom.ViewModels;
+using Reservroom.Stores;
+using Reservroom.Services;
 
 namespace Reservroom
 {
@@ -16,32 +19,36 @@ namespace Reservroom
     /// </summary>
     public partial class App : Application
     {
+        private readonly Hotel _hotel;
+        private readonly NavigationStore _navigationStore;
+        public App()
+        {
+            _hotel = new Hotel("Wonhong Suites");
+            _navigationStore = new NavigationStore();
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            Hotel hotel = new Hotel("Wonhong Suites");
+            _navigationStore.CurrentViewModel = CreateReservationListingViewModel();
 
-            try
+            MainWindow = new MainWindow()
             {
-                hotel.MakeReservation(new Reservation(
-                    "wonhong",
-                    new RoomId(1, 3),
-                    new DateTime(2000, 1, 1),
-                    new DateTime(2000, 1, 4)));
+                DataContext = new MainViewModel(_navigationStore)
+            };
 
-                hotel.MakeReservation(new Reservation(
-                    "wonhong",
-                    new RoomId(1, 3),
-                    new DateTime(2000, 1, 1),
-                    new DateTime(2000, 1, 4)));
-            }
-            catch(ReservationConflictException ex)
-            {
-
-            }
-
-            IEnumerable<Reservation> reservations = hotel.GetReservationForUser("wonhong");
+            MainWindow.Show();
 
             base.OnStartup(e);
+        }
+
+        private MakeReservationViewModel CreateMakeReservationViewModel()
+        {
+            return new MakeReservationViewModel(_hotel, new NavigationService(_navigationStore, CreateReservationListingViewModel));
+        }
+
+        private ReservationListingViewModel CreateReservationListingViewModel()
+        {
+            return new ReservationListingViewModel(_hotel, new NavigationService(_navigationStore, CreateMakeReservationViewModel));
         }
     }
 }

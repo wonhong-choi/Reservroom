@@ -10,11 +10,7 @@ namespace Reservroom.Models
     {
         private readonly ReservationBook _reservationBook;
 
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         public Hotel(string name)
         {
@@ -22,9 +18,9 @@ namespace Reservroom.Models
             _reservationBook = new ReservationBook();
         }
 
-        public IEnumerable<Reservation> GetReservationForUser(string username)
+        public IEnumerable<Reservation> GetAllReservation()
         {
-            return _reservationBook.GetReservationsForUser(username);
+            return _reservationBook.GetAllReservations();
         }
 
         public void MakeReservation(Reservation reservation)

@@ -15,9 +15,9 @@ namespace Reservroom.Models
 
         public TimeSpan Length => EndTime.Subtract(StartTime);
 
-        public Reservation(string name, RoomId roomId, DateTime startTime, DateTime endTime)
+        public Reservation(string username, RoomId roomId, DateTime startTime, DateTime endTime)
         {
-            Username = name;
+            Username = username;
             this.RoomId = roomId;
             StartTime = startTime;
             EndTime = endTime;
