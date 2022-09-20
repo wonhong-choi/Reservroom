@@ -74,10 +74,10 @@ namespace Reservroom.ViewModels
         public ICommand SubmitCommand { get; }
         public ICommand CancelCommand { get; }
 
-        public MakeReservationViewModel(Hotel hotel,
+        public MakeReservationViewModel(HotelStore hotelStore,
                                         NavigationService reservationListingViewNavigationService)
         {
-            SubmitCommand = new MakeReservationCommand(this, hotel, reservationListingViewNavigationService);
+            SubmitCommand = new MakeReservationCommand(this, hotelStore, reservationListingViewNavigationService);
             CancelCommand = new NavigationCommand(reservationListingViewNavigationService);
         }
     }

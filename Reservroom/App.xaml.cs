@@ -24,9 +24,11 @@ namespace Reservroom
     /// </summary>
     public partial class App : Application
     {
+        private const string CONNECTION_STRING = "Data Source=reservoom.db";
+
         private readonly Hotel _hotel;
         private readonly NavigationStore _navigationStore;
-        private const string CONNECTION_STRING = "Data Source=reservoom.db";
+        private readonly HotelStore _hotelStore;
         private readonly ReservoomDbContextFactory _dbContextFactory;
 
         public App()
@@ -39,6 +41,7 @@ namespace Reservroom
 
             ReservationBook reservationBook = new ReservationBook(reservationProvider, reservationCreator, reservationConflictValidator);
             _hotel = new Hotel("Wonhong Suites", reservationBook);
+            _hotelStore=new HotelStore(_hotel);
             _navigationStore = new NavigationStore();
         }
 
@@ -63,12 +66,12 @@ namespace Reservroom
 
         private MakeReservationViewModel CreateMakeReservationViewModel()
         {
-            return new MakeReservationViewModel(_hotel, new NavigationService(_navigationStore, CreateReservationListingViewModel));
+            return new MakeReservationViewModel(_hotelStore, new NavigationService(_navigationStore, CreateReservationListingViewModel));
         }
 
         private ReservationListingViewModel CreateReservationListingViewModel()
         {
-            return ReservationListingViewModel.LoadViewModel(_hotel, new NavigationService(_navigationStore, CreateMakeReservationViewModel));
+            return ReservationListingViewModel.LoadViewModel(_hotelStore, new NavigationService(_navigationStore, CreateMakeReservationViewModel));
         }
     }
 }

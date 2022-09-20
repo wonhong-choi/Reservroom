@@ -10,21 +10,22 @@ using System.Windows;
 
 using System.ComponentModel;
 using Reservroom.Services;
+using Reservroom.Stores;
 
 namespace Reservroom.Commands
 {
     public class MakeReservationCommand : AsyncCommandBase
     {
-        private readonly Hotel _hotel;
+        private readonly HotelStore _hotelStore;
         private readonly NavigationService _reservationViewNavigationService;
         private readonly MakeReservationViewModel _makeReservationViewModel;
 
         public MakeReservationCommand(MakeReservationViewModel makeReservationViewModel,
-            Hotel hotel,
+            HotelStore hotelStore,
             NavigationService reservationViewNavigationService)
         {
             _makeReservationViewModel = makeReservationViewModel;
-            _hotel = hotel;
+            _hotelStore = hotelStore;
 
             _reservationViewNavigationService = reservationViewNavigationService;
 
@@ -47,9 +48,9 @@ namespace Reservroom.Commands
                 _makeReservationViewModel.EndDate);
             try
             {
-                await _hotel.MakeReservation(reservation);
-                MessageBox.Show("Successfully reserved room.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                await _hotelStore.MakeReservation(reservation);
 
+                MessageBox.Show("Successfully reserved room.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 _reservationViewNavigationService.Navigate();
             }
             catch (ReservationConflictException)

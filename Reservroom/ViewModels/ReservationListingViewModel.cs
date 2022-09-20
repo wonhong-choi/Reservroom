@@ -14,23 +14,39 @@ namespace Reservroom.ViewModels
 {
     public class ReservationListingViewModel : ViewModelBase
     {
+        private HotelStore _hotelStore;
         private readonly ObservableCollection<ReservationViewModel> _reservations;
         public IEnumerable<ReservationViewModel> Reservations => _reservations;
         
         public ICommand MakeReservationCommand { get; }
         public ICommand LoadReservationCommand { get; }
 
-        public ReservationListingViewModel(Hotel hotel, NavigationService makeReservationNavigationService)
+        public ReservationListingViewModel(HotelStore hotelStore, NavigationService makeReservationNavigationService)
         {
+            _hotelStore = hotelStore;
             _reservations = new ObservableCollection<ReservationViewModel>();
 
             MakeReservationCommand = new NavigationCommand(makeReservationNavigationService);
-            LoadReservationCommand = new LoadReservationsCommand(this, hotel);
+            LoadReservationCommand = new LoadReservationsCommand(this, hotelStore);
+
+            _hotelStore.ReservationMade += OnReservationMade;
         }
 
-        public static ReservationListingViewModel LoadViewModel(Hotel hotel, NavigationService makeReservationNavigationService)
+        private void OnReservationMade(Reservation reservation)
         {
-            ReservationListingViewModel viewModel = new ReservationListingViewModel(hotel, makeReservationNavigationService);
+            ReservationViewModel reservationViewModel = new ReservationViewModel(reservation);
+            _reservations.Add(reservationViewModel);
+        }
+
+        public override void Dispose()
+        {
+            _hotelStore.ReservationMade -= OnReservationMade;
+            base.Dispose();
+        }
+
+        public static ReservationListingViewModel LoadViewModel(HotelStore hotelStore, NavigationService makeReservationNavigationService)
+        {
+            ReservationListingViewModel viewModel = new ReservationListingViewModel(hotelStore, makeReservationNavigationService);
 
             viewModel.LoadReservationCommand.Execute(null);
 
@@ -47,5 +63,7 @@ namespace Reservroom.ViewModels
                 _reservations.Add(reservationViewModel);
             }
         }
+
+
     }
 }
