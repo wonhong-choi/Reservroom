@@ -23,7 +23,7 @@ namespace Reservroom.Models
             EndTime = endTime;
         }
 
-        public bool Conflict(Reservation reservation)
+        public bool Conflicts(Reservation reservation)
         {
             if (this.RoomId != reservation.RoomId)
             {

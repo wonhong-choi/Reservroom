@@ -13,7 +13,7 @@ using Reservroom.Services;
 
 namespace Reservroom.Commands
 {
-    public class MakeReservationCommand : CommandBase
+    public class MakeReservationCommand : AsyncCommandBase
     {
         private readonly Hotel _hotel;
         private readonly NavigationService _reservationViewNavigationService;
@@ -38,7 +38,7 @@ namespace Reservroom.Commands
                 && base.CanExecute(parameter);
         }
 
-        public override void Execute(object parameter)
+        public override async Task ExecuteAsync(object parameter)
         {
             Reservation reservation = new Reservation(
                 _makeReservationViewModel.Username,
@@ -47,7 +47,7 @@ namespace Reservroom.Commands
                 _makeReservationViewModel.EndDate);
             try
             {
-                _hotel.MakeReservation(reservation);
+                await _hotel.MakeReservation(reservation);
                 MessageBox.Show("Successfully reserved room.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 _reservationViewNavigationService.Navigate();
@@ -55,6 +55,10 @@ namespace Reservroom.Commands
             catch (ReservationConflictException)
             {
                 MessageBox.Show("This room is already taken.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Failed to Reservation.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
